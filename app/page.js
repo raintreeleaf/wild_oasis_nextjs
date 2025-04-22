@@ -6,12 +6,13 @@ import bg from "@/public/bg.png";
 
 export default function Page() {
   return (
-    <main className="mt-24">
+    <main className="mt-24 ">
       {/* If we are using css, we would be using background-image on main */}
       <Image
         src={bg}
         fill
-        className="object-cover"
+        placeholder="blur"
+        className="object-cover object-top"
         alt="Mountains and forests with two cabins"
       />
 
