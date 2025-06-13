@@ -60,6 +60,8 @@ export default function UpdateProfileForm({ guest, children }) {
 }
 
 function Button() {
+  //useFormStatus must be called in a component nested in a form
+  //it will not work if it is called in that form.
   const { pending } = useFormStatus();
   return (
     <button
