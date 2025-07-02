@@ -24,7 +24,27 @@ export async function updateGuest(formData) {
   }
   revalidatePath("/account/profile");
 }
-
+export async function createBooking(bookingData, formData) {
+  const session = await auth();
+  if (!session) {
+    throw new Error("You must be logged in!");
+  }
+  //You can extract data from formData by doing this:
+  // console.log(Object.fromEntries(formData.entries()));
+  const newBooking = {
+    ...bookingData,
+    guestId: session.guestId,
+    numGuests: +formData.get("numGuests"),
+    observations: formData.get("observations").slice(0, 1000),
+    extrasPrice: 0,
+    totalPrice: bookingData.cabinPrice,
+    isPaid: false,
+    hasBreakfast: false,
+    status: "unconfirmed",
+  };
+  //use zod library for data validation
+  console.log(newBooking);
+}
 export async function deleteReservation(bookingId) {
   const session = await auth();
   if (!session) {

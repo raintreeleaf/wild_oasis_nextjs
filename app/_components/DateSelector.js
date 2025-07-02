@@ -1,5 +1,10 @@
 "use client";
-import { isWithinInterval } from "date-fns";
+import {
+  differenceInDays,
+  isPast,
+  isSameDay,
+  isWithinInterval,
+} from "date-fns";
 import { DayPicker } from "react-day-picker";
 // import "react-day-picker/dist/style.css";
 import "react-day-picker/style.css";
@@ -17,11 +22,15 @@ function isAlreadyBooked(range, datesArr) {
 
 function DateSelector({ settings, bookedDates, cabin }) {
   const { range, setRange, resetRange } = useReservation();
+  const displayRange = isAlreadyBooked(range, bookedDates) ? {} : range;
   // CHANGE
-  const regularPrice = 23;
-  const discount = 23;
-  const numNights = 23;
-  const cabinPrice = 23;
+  const { regularPrice, discount } = cabin;
+  const numNights = differenceInDays(displayRange.to, displayRange.from);
+  const cabinPrice = numNights * (regularPrice - discount);
+  // const regularPrice = 23;
+  // const discount = 23;
+  // const numNights = 23;
+  // const cabinPrice = 23;
   // const range = { from: null, to: null };
 
   // SETTINGS
@@ -32,7 +41,7 @@ function DateSelector({ settings, bookedDates, cabin }) {
     <div className="flex flex-col justify-between">
       <DayPicker
         onSelect={setRange}
-        selected={range}
+        selected={displayRange}
         className="pt-12 place-self-center"
         mode="range"
         min={minBookingLength + 1}
@@ -42,6 +51,11 @@ function DateSelector({ settings, bookedDates, cabin }) {
         toYear={new Date().getFullYear() + 5}
         captionLayout="dropdown"
         numberOfMonths={2}
+        disabled={(curDate) =>
+          isPast(curDate) ||
+          bookedDates.some((date) => isSameDay(date, curDate))
+        }
+        // passing callback to disabled is specific to daypicker
       />
 
       <div className="flex items-center justify-between px-8 bg-accent-500 text-primary-800 h-[72px]">
@@ -72,7 +86,7 @@ function DateSelector({ settings, bookedDates, cabin }) {
           ) : null}
         </div>
 
-        {range.from || range.to ? (
+        {displayRange.from || displayRange.to ? (
           <button
             className="border border-primary-800 py-2 px-4 text-sm font-semibold"
             onClick={() => resetRange()}
