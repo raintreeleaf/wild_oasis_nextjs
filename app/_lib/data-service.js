@@ -142,7 +142,7 @@ export async function getCountries() {
     const res = await fetch(
       "https://countriesnow.space/api/v0.1/countries/flag/images"
     );
-    const countries = await res.json();
+    const countries = (await res.json()).data;
     return countries;
   } catch {
     throw new Error("Could not fetch countries");
